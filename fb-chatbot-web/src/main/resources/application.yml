@@ -1,0 +1,15 @@
+server:
+  port: 9090
+  tomcat:
+    basedir: target/tomcat
+    accesslog:
+      enabled: true
+      pattern: '%h %p %t "%r" %s %bs'
+
+logging:
+  file: logs/fb-chatbot.log
+  level:
+    io.chatbot: DEBUG
+    org.springframework.web: INFO
+    org.springframework.boot: INFO
+
