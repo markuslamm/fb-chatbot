@@ -13,3 +13,6 @@ logging:
     org.springframework.web: INFO
     org.springframework.boot: INFO
 
+fb:
+  verifytoken: 1234567890
+
