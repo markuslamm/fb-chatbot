@@ -1,5 +1,6 @@
 package io.chatbot.controller;
 
+import io.chatbot.model.IncomingMessageData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +27,7 @@ public final class FacebookMessengerController {
     @RequestMapping(value = "/hook", method = RequestMethod.GET)
     public String fbMessengerHook(@RequestParam(name = "hub.verify_token") final String verifyToken,
                                   @RequestParam(name = "hub.challenge") final String challenge) {
-        LOG.info("Received Facebook request, hub.verify_token={}, hub.challenge={}", verifyToken, challenge);
+        LOG.info("Received Facebook verification request, hub.verify_token={}, hub.challenge={}", verifyToken, challenge);
         if(!fbVerifyToken.equals(verifyToken)) {
             throw new RuntimeException("Invalid token");
         }
@@ -34,8 +35,8 @@ public final class FacebookMessengerController {
     }
 
     @RequestMapping(value = "/hook", method = RequestMethod.POST)
-    public ResponseEntity<Void> handleMessage(@RequestBody final Object msgs) {
-        LOG.info("Received Facebook message : {}", msgs);
+    public ResponseEntity<Void> handleMessage(@RequestBody final IncomingMessageData incomingMessageData) {
+        LOG.info("Received message data: {}", incomingMessageData);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -2,12 +2,14 @@ package io.chatbot.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
 /**
  * Maps incoming message data received bei the registered facebook
- * webhook in {@code FacebookMessengerController.
+ * webhook in {@code FacebookMessengerController}.
  * <p>
  * {
  * "object": "page",
@@ -79,6 +81,11 @@ public final class IncomingMessageData {
         public List<Messaging> getMessaging() {
             return messaging;
         }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        }
     }
 
     public static class MessagingActor {
@@ -91,6 +98,11 @@ public final class IncomingMessageData {
 
         public Long getId() {
             return id;
+        }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
         }
     }
 
@@ -126,6 +138,11 @@ public final class IncomingMessageData {
         public Message getMessage() {
             return message;
         }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        }
     }
 
     public static class Message {
@@ -153,5 +170,15 @@ public final class IncomingMessageData {
         public String getText() {
             return text;
         }
+
+        @Override
+        public String toString() {
+            return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }
