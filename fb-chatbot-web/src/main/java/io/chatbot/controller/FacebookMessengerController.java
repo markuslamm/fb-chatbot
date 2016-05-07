@@ -1,6 +1,7 @@
 package io.chatbot.controller;
 
-import io.chatbot.model.IncomingMessageData;
+import io.chatbot.model.IncomingMessage;
+import io.chatbot.model.json.IncomingMessageData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,19 +38,22 @@ public final class FacebookMessengerController {
     @RequestMapping(value = "/hook", method = RequestMethod.POST)
     public ResponseEntity<Void> handleMessage(@RequestBody final IncomingMessageData incomingMessageData) {
         LOG.info("Received message data: {}", incomingMessageData);
+        final IncomingMessage incomingMessage = new IncomingMessage(incomingMessageData);
+        sendMessage(incomingMessage.getSenderId(), "ECHO: " + incomingMessage.getText());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    public void sendMessage(final String recipientId, final String msg) {
+    public void sendMessage(final Long recipientId, final String msg) {
         RestTemplate restTemplate = new RestTemplate();
         final String url = format("https://graph.facebook.com/v2.6/me/messages?access_token=%s", fbAccesstoken);
-        final String body = format("{\"recipient\": { \"id\": %s }, \"message\": { \"text\":\"hello, world!\" }}", recipientId);
+        final String body = format("{\"recipient\": { \"id\": %s }, \"message\": { \"text\":\"%s\" }}", recipientId, msg);
         final HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
-        final HttpEntity<String> requestEntity = new HttpEntity<String>(body, headers);
+        final HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
         final ResponseEntity<Object> exchange = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Object.class);
         LOG.info("Send Facebook message: {}", exchange.getStatusCode());
     }
+
 
 
 }

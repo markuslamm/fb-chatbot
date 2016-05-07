@@ -1,6 +1,7 @@
 package io.chatbot.model;
 
-import io.chatbot.json.JsonUtils;
+import io.chatbot.model.json.IncomingMessageData;
+import io.chatbot.util.json.JsonUtils;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

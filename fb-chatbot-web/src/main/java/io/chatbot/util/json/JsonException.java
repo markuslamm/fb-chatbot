@@ -1,4 +1,4 @@
-package io.chatbot.json;
+package io.chatbot.util.json;
 
 public class JsonException extends RuntimeException {
 
