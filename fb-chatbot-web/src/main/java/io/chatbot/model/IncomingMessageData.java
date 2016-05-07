@@ -58,20 +58,20 @@ public final class IncomingMessageData {
     }
 
     public static class Entry {
-        private final Long pageId;
+        private final Long id;
         private final Long time;
         private final List<Messaging> messaging;
 
         @JsonCreator
-        public Entry(@JsonProperty("id") final Long pageId, @JsonProperty("time") final Long time,
+        public Entry(@JsonProperty("id") final Long id, @JsonProperty("time") final Long time,
                      @JsonProperty("messaging") final List<Messaging> messaging) {
-            this.pageId = pageId;
+            this.id = id;
             this.time = time;
             this.messaging = messaging;
         }
 
-        public Long getPageId() {
-            return pageId;
+        public Long getId() {
+            return id;
         }
 
         public Long getTime() {

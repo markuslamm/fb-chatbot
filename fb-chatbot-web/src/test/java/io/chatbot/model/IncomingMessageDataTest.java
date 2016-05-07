@@ -16,7 +16,7 @@ public final class IncomingMessageDataTest {
         assertThat(result.getObject()).isNotNull();
         assertThat(result.getEntry()).isNotNull();
         result.getEntry().forEach(entry -> {
-            assertThat(entry.getPageId()).isNotNull();
+            assertThat(entry.getId()).isNotNull();
             assertThat(entry.getTime()).isNotNull();
             assertThat(entry.getMessaging()).isNotNull();
             entry.getMessaging().forEach(messaging -> {
