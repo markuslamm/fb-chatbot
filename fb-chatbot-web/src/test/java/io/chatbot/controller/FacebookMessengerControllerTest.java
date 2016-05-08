@@ -1,6 +1,5 @@
-package io.chatbot.model;
+package io.chatbot.controller;
 
-import io.chatbot.controller.FacebookMessengerController;
 import io.chatbot.model.json.IncomingMessageData;
 import org.assertj.core.api.Assertions;
 import org.junit.Before;
