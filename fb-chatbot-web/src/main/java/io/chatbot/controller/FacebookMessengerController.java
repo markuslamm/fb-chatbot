@@ -1,59 +1,48 @@
 package io.chatbot.controller;
 
+import io.chatbot.messaging.IncomingMessageHandler;
+import io.chatbot.model.json.IncomingMessageData;
+import io.chatbot.service.FBVerificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 @RestController
 public final class FacebookMessengerController {
 
     private static final Logger LOG = LoggerFactory.getLogger(FacebookMessengerController.class);
 
-    private final String fbVerifyToken;
-    private final String fbAccesstoken;
+    private final FBVerificationService fbVerificationService;
+    private final IncomingMessageHandler incomingMessageHandler;
 
+    @Autowired
+    public FacebookMessengerController(final FBVerificationService fbVerificationService,
+                                       final IncomingMessageHandler incomingMessageHandler) {
+        this.fbVerificationService = requireNonNull(fbVerificationService);
+        this.incomingMessageHandler = requireNonNull(incomingMessageHandler);
 
-
-    public FacebookMessengerController(@Value("${fb.verifytoken}") final String fbVerifyToken,
-                                       @Value("${fb.accesstoken}") final String fbAccesstoken) {
-        this.fbVerifyToken = fbVerifyToken;
-        this.fbAccesstoken = fbAccesstoken;
     }
 
     @RequestMapping(value = "/hook", method = RequestMethod.GET)
     public String fbMessengerHook(@RequestParam(name = "hub.verify_token") final String verifyToken,
                                   @RequestParam(name = "hub.challenge") final String challenge) {
         LOG.info("Received Facebook verification request, hub.verify_token={}, hub.challenge={}", verifyToken, challenge);
-        if(!fbVerifyToken.equals(verifyToken)) {
-            throw new RuntimeException("Invalid token");
-        }
-        return challenge;
+        return fbVerificationService.verifyWebhook(verifyToken, challenge);
     }
 
     @RequestMapping(value = "/hook", method = RequestMethod.POST)
-    public ResponseEntity<Void> handleMessage(@RequestBody final String incomingMessageData) {
+    public ResponseEntity<Void> handleMessage(@RequestBody final IncomingMessageData incomingMessageData) {
         LOG.info("Received message data: {}", incomingMessageData);
-//        final IncomingMessage incomingMessage = new IncomingMessage(incomingMessageData);
-//        sendMessage(incomingMessage.getSenderId(), "ECHO: " + incomingMessage.getText());
+        final ResponseEntity<?> responseEntity = incomingMessageHandler.handleMessage(incomingMessageData);
+        if(!responseEntity.getStatusCode().is2xxSuccessful()) {
+            throw new RuntimeException(format("Cannot send message, status: %s", responseEntity.getStatusCode()));
+        }
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-    public void sendMessage(final Long recipientId, final String msg) {
-        RestTemplate restTemplate = new RestTemplate();
-        final String url = format("https://graph.facebook.com/v2.6/me/messages?access_token=%s", fbAccesstoken);
-        final String body = format("{\"recipient\": { \"id\": %s }, \"message\": { \"text\":\"%s\" }}", recipientId, msg);
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json");
-        final HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
-        final ResponseEntity<Object> exchange = restTemplate.exchange(url, HttpMethod.POST, requestEntity, Object.class);
-        LOG.info("Send Facebook message: {}", exchange.getStatusCode());
-    }
-
-
-
 }
