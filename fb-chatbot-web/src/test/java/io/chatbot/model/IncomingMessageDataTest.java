@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public final class IncomingMessageDataTest {
 
-    private static final String RAW_DATA = "incomming-message-data.json";
+    private static final String RAW_DATA = "incoming-message-data.json";
 
     @Test
     public void testMapJson() {

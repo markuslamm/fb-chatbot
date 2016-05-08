@@ -1,7 +1,5 @@
 package io.chatbot.controller;
 
-import io.chatbot.model.IncomingMessage;
-import io.chatbot.model.json.IncomingMessageData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,10 +34,10 @@ public final class FacebookMessengerController {
     }
 
     @RequestMapping(value = "/hook", method = RequestMethod.POST)
-    public ResponseEntity<Void> handleMessage(@RequestBody final IncomingMessageData incomingMessageData) {
+    public ResponseEntity<Void> handleMessage(@RequestBody final String incomingMessageData) {
         LOG.info("Received message data: {}", incomingMessageData);
-        final IncomingMessage incomingMessage = new IncomingMessage(incomingMessageData);
-        sendMessage(incomingMessage.getSenderId(), "ECHO: " + incomingMessage.getText());
+//        final IncomingMessage incomingMessage = new IncomingMessage(incomingMessageData);
+//        sendMessage(incomingMessage.getSenderId(), "ECHO: " + incomingMessage.getText());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
