@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public final class Message {
 
@@ -23,7 +25,7 @@ public final class Message {
         this.mid = mid;
         this.seq = seq;
         this.text = text;
-        this.attachments = attachments;
+        this.attachments = Optional.ofNullable(attachments).orElse(new ArrayList<>());
     }
 
     public String getMid() {

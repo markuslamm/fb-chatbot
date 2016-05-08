@@ -1,8 +1,14 @@
 package io.chatbot.model;
 
+import io.chatbot.model.json.Entry;
 import io.chatbot.model.json.IncomingMessageData;
+import io.chatbot.model.json.Message;
+import io.chatbot.model.json.Messaging;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public final class IncomingMessage {
 
@@ -15,17 +21,27 @@ public final class IncomingMessage {
     private final String mid;
     private final Integer seq;
     private final String text;
+    private final List<Attachment> attachments;
 
     public IncomingMessage(final IncomingMessageData incomingMessageData) {
         this.object = incomingMessageData.getObject();
-        this.id = incomingMessageData.getEntry().get(0).getId();
-        this.time = incomingMessageData.getEntry().get(0).getTime();
-        this.senderId = incomingMessageData.getEntry().get(0).getMessaging().get(0).getSender().getId();
-        this.recipientId = incomingMessageData.getEntry().get(0).getMessaging().get(0).getRecipient().getId();
-        this.timestamp = incomingMessageData.getEntry().get(0).getMessaging().get(0).getTimestamp();
-        this.mid = incomingMessageData.getEntry().get(0).getMessaging().get(0).getMessage().getMid();
-        this.seq = incomingMessageData.getEntry().get(0).getMessaging().get(0).getMessage().getSeq();
-        this.text = incomingMessageData.getEntry().get(0).getMessaging().get(0).getMessage().getText();
+
+        final Entry entry = incomingMessageData.getEntry().get(0);
+        this.id = entry.getId();
+        this.time = entry.getTime();
+
+        final Messaging messaging = entry.getMessaging().get(0);
+        this.senderId = messaging.getSender().getId();
+        this.recipientId = messaging.getRecipient().getId();
+        this.timestamp = messaging.getTimestamp();
+
+        final Message message = messaging.getMessage();
+        this.mid = message.getMid();
+        this.seq = message.getSeq();
+        this.text = message.getText();
+        this.attachments = message.getAttachments().stream()
+                .map(attachment -> new Attachment(attachment.getType(), attachment.getPayload()))
+                .collect(Collectors.toList());
     }
 
     public String getObject() {
@@ -62,6 +78,10 @@ public final class IncomingMessage {
 
     public String getText() {
         return text;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
     }
 
     @Override
