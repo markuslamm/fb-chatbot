@@ -17,6 +17,8 @@ public final class FacebookMessengerController {
     private final String fbVerifyToken;
     private final String fbAccesstoken;
 
+
+
     public FacebookMessengerController(@Value("${fb.verifytoken}") final String fbVerifyToken,
                                        @Value("${fb.accesstoken}") final String fbAccesstoken) {
         this.fbVerifyToken = fbVerifyToken;
